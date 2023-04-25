@@ -1,70 +1,59 @@
 package com.example.ProjectBeehive.controller;
 
+import com.example.ProjectBeehive.exception.ResourceNotFoundException;
+import com.example.ProjectBeehive.payload.JWTAuthResponse;
+import com.example.ProjectBeehive.payload.LoginDto;
 import com.example.ProjectBeehive.entity.User;
-import com.example.ProjectBeehive.security.SecureIdGenerator;
+import com.example.ProjectBeehive.exception.UserNotFoundException;
+import com.example.ProjectBeehive.payload.RegisterDto;
 import com.example.ProjectBeehive.security.UserResponse;
-//import com.example.ProjectBeehive.security.UserRole;
+import com.example.ProjectBeehive.service.AuthService;
 import com.example.ProjectBeehive.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigInteger;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
+
     private UserService userService;
+    private AuthService authService;
 
-    @Autowired
-    private SecureIdGenerator secureIdGenerator;
-
-    @GetMapping("/")
-    public Page<UserResponse> getUsers(Pageable pageable){
-        Page<UserResponse> users = userService.findAll(pageable);
-        return users;
+    public UserController(UserService userService, AuthService authService){
+        this.userService = userService;
+        this.authService = authService;
     }
 
-    // POST request to /user/ creates a user with the ID 123 using the body data (see 4. below). The response returns the ID.
-    @PostMapping("/")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        // create user with provided data
-        user.setId(secureIdGenerator.generateSecureID());
-
-        // Set the default user role
-        String defaultRoles = "ROLE_USER";
-        user.setRoles(defaultRoles);
-
-        User savedUser = userService.save(user);
-
-        // return ID of created user in response body
-        return ResponseEntity.ok(savedUser.getId().toString());
+    @GetMapping("/getAllUsers")
+    public Page<UserResponse> findAll(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,
+                                      @RequestParam(defaultValue = "id") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return userService.findAll(pageable);
     }
 
     // PUT request to /user/123 updates user 123 with the body data (see 4. below)
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable BigInteger id, @RequestBody User user) {
+/*    @PutMapping("/update")
+    public ResponseEntity<Void> updateUser(@PathVariable BigInteger ID, @RequestBody User user) {
         // update user with provided data
-        user.setId(id);
+        user.setId(ID);
         userService.save(user);
         // return success response
         return ResponseEntity.ok().build();
-    }
+    }*/
 
-        // GET request to /user/123 returns the details of user 123
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id) {
-        // retrieve user with specified ID from repository
-        Optional<User> optionalUser = userService.findById(id);
+    @GetMapping("/getUser/{username}")
+    public ResponseEntity<User> getUser(@PathVariable String username) {
+        // retrieve user with specified username from repository
+        Optional<User> optionalUser = userService.findByUsername(username);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             // return user details in response body
@@ -74,24 +63,39 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
-        // DELETE request to /user/123 deletes user 123
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable BigInteger id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser(@RequestParam String username) {
         // delete user with specified ID from repository
-        userService.deleteById(id);
+        boolean deleted = userService.deleteById(username);
+        if (!deleted) {
+            throw new ResourceNotFoundException("User", username, BigInteger.valueOf(300));
+        }
         // return success response
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/users")
-    public Page<UserResponse> findAll(@RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           @RequestParam(defaultValue = "id") String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return userService.findAll(pageable);
+    @PostMapping("/login")
+    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
-    
+    // POST request to /user/ creates a user with the ID 123 using the body data (see 4. below). The response returns the ID.
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
+        String response = authService.register(registerDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+
+/*    @PutMapping("/change_password")
+    public ResponseEntity<String> changePassword(@RequestParam String username, @RequestBody String password){
+        userService.changePassword(username, password);
+        return ResponseEntity.ok("Password Changed");
+    }*/
 
 }

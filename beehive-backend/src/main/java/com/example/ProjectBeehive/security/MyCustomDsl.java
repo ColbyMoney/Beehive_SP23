@@ -1,4 +1,4 @@
-/*
+
 package com.example.ProjectBeehive.security;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,4 +19,4 @@ public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurit
     }
 
 }
-*/
+

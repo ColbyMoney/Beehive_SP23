@@ -1,7 +1,7 @@
 package com.example.ProjectBeehive.security;
 
-import com.example.ProjectBeehive.repository.UserRepository;
 import com.example.ProjectBeehive.service.UserService;
+import com.example.ProjectBeehive.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

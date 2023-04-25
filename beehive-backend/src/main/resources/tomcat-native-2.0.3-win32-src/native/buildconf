@@ -1,0 +1,109 @@
+#!/bin/sh
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+# Default place to look for apr source.  Can be overridden with 
+#   --with-apr=[directory]
+apr_src_dir=`pwd`/srclib/apr-1.5.2
+
+while [ $# -gt 0 ]
+do
+  # Normalize
+  case "$1" in
+  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+  *) optarg= ;;
+  esac
+
+  case "$1" in
+  --with-apr=*)
+    apr_src_dir=$optarg
+    ;;
+  esac
+
+  shift
+done
+
+if [ -d "$apr_src_dir" ]; then
+  echo ""
+  echo "Looking for apr source in $apr_src_dir"
+else
+  echo ""
+  echo "Problem finding apr source in $apr_src_dir."
+  echo "Use:"
+  echo "  --with-apr=[directory]" 
+  exit 1
+fi
+
+if [ ! -d "$apr_src_dir/build" ]; then
+  echo "Directory '$apr_src_dir/build' missing - wrong apr source directory?"
+  exit 1
+fi
+
+# Remove some files, then copy them from apr source tree
+for file in apr_common.m4 find_apr.m4 install.sh config.guess config.sub
+do
+  if [ ! -f "$apr_src_dir/build/$file" ]; then
+    echo "File '$apr_src_dir/build/$file' missing - wrong apr source directory?"
+    exit 1
+  fi
+  rm -f build/$file
+  cp $apr_src_dir/build/$file build/
+done
+
+# Remove aclocal.m4 as it'll break some builds...
+rm -rf aclocal.m4 autom4te*.cache
+
+echo "Creating configure ..."
+### do some work to toss config.cache?
+${AUTOCONF:-autoconf}
+if [ $? -gt 0 ]; then
+  echo "autoconf failed"
+  exit 1
+fi
+
+#
+# Generate build-outputs.mk for the build systme
+#
+PYTHON=${PYTHON-`build/PrintPath python3 python2 python`}
+
+echo "Generating 'make' outputs ..."
+${PYTHON} $apr_src_dir/build/gen-build.py make
+if [ $? -gt 0 ]; then
+  echo "Creating build-outputs.mk failed"
+  exit 1
+fi
+
+# Remove autoconf cache again
+rm -rf autom4te*.cache
+
+# Create RPM Spec file
+echo rebuilding rpm spec file
+REVISION=`build/get-version.sh all include/tcn_version.h TCN`
+# Strip everything behind "-"
+VERSION=`echo $REVISION | sed -e 's/-.*//'`
+# Strip everything before "-"
+RELEASE=`echo $REVISION | sed -e 's/.*-//'`
+# Handle case of no "-" in REVISION
+if [ "x$RELEASE" = "x$REVISION" ]; then
+  RELEASE=1
+fi
+echo "Using version '$VERSION' and release '$RELEASE' in RPM spec file"
+sed -e "s/TCN_VERSION/$VERSION/" \
+    -e "s/TCN_RELEASE/$RELEASE/" \
+    ./build/rpm/tcnative.spec.in \
+    > tcnative.spec

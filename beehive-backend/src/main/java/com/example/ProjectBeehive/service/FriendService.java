@@ -1,19 +1,25 @@
+/*
 package com.example.ProjectBeehive.service;
 
 import com.example.ProjectBeehive.entity.Friend;
-import com.example.ProjectBeehive.repository.FriendRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+public interface FriendService {
 
-@Service
-public class FriendService {
+    public Page<Friend> findAll(Pageable pageable);
 
-    FriendRepository friendRepository;
+    public void removeFriend(String username, String friend_username);
 
-    public Page<Friend> findAll(Pageable pageable) {
-        return (Page<Friend>) friendRepository.findAll();
-    }
+    public void addFriend(String username, String friend_username);
+
+    public Friend findById(String username);
+
+    //public List<CommentDto> getFriendPosts(String username)
+
+    //private List<PostWithCommentsDto> combinePostsAndComments
+
+    public boolean requestExists(String username, String friendUsername);
+
 }
+*/

@@ -1,4 +1,3 @@
-/*
 package com.example.ProjectBeehive.security;
 
 import jakarta.servlet.FilterChain;
@@ -22,4 +21,3 @@ public class CustomFilter extends GenericFilterBean {
         this.authenticationManager = authenticationManager;
     }
 }
-*/

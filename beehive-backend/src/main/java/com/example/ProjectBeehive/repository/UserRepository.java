@@ -18,29 +18,45 @@ public interface UserRepository extends JpaRepository<User, BigInteger> {
 
     Page<User> findAll(Pageable pageable);
 
-    User save(User user);
+    //User save(User user);
 
     long count();
 
-    //User login(User user);
+    @Query("Select u FROM User u WHERE u.password = :password and u.username = :username")
+    Optional<User> findByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 
     @Modifying
     @Transactional
     @Query("DELETE FROM User u WHERE u.ID = :id")
     void deleteById(@Param("id") BigInteger id);
 
-    void delete(User user);
+    void deleteByUsername(String username);
 
     @Modifying
     @Transactional
     @Query("DELETE FROM User u")
     void deleteAllById(Iterable<? extends BigInteger> ids);
 
-    Optional<User> findById(String id);
+    @Transactional
+    @Query("SELECT u.ID FROM User u WHERE u.username = :username")
+    BigInteger findIdByUsername(String username);
 
     Optional<User> findByUsername(String username);
+    Optional<User> findByUsernameOrEmail(String username, String email);
+    Optional<User> findByEmail(String Email);
+    Optional<User> findByRole(String role);
+
+    Boolean existsByUsername(String username);
+
+    Boolean existsByEmail(String email);
 
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.ID = :id")
     boolean existsById(@Param("id") BigInteger ID);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.password = :password WHERE u.username = :username")
+    void changePassword(@Param("username") String username, @Param("password") String password);
+
+    User findUserByID(BigInteger ID);
 }
