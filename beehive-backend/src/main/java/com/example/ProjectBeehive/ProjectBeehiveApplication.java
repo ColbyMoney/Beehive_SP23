@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @AutoConfiguration
 public class ProjectBeehiveApplication {
 
+
 	@Bean
 	public ModelMapper modelMapper(){
 		return new ModelMapper();
