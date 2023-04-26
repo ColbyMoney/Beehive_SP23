@@ -24,11 +24,14 @@ import java.net.URL;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -89,51 +92,26 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass = etPassword.getText().toString();
                 String DoB = etDate.getText().toString();
 
-                if (TextUtils.isEmpty(user) || TextUtils.isEmpty(name) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(DoB)){
+                if (TextUtils.isEmpty(user) || TextUtils.isEmpty(name) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(DoB)) {
                     Toast.makeText(RegisterActivity.this, "All fields Required", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     Boolean checkuser = DB.checkUsername(user);
-                    if (checkuser == false){
-                        Boolean insert = DB.insertData(user, pass, name, DoB);
-                        if (insert==true){
-                            //Start of new code
-                            try {
-                                URL url = new URL("http://153.91.238.178:8080/user/register");
-                                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                                con.setRequestMethod("POST");
+                    if (checkuser == false) {
+                        Boolean insert = DB.insertData(user, name, pass, DoB);
+                        if (insert) {
+                            // Start of new code
+                            new RegisterTask().execute(user, pass, name, DoB);
+                            // End of new code
 
-                                String postData = "username=user&password=pass";
-                                con.setDoOutput(true);
-                                DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                                out.writeBytes(postData);
-                                out.flush();
-                                out.close();
-
-                                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                                String inputLine;
-                                StringBuffer content = new StringBuffer();
-                                while ((inputLine = in.readLine()) != null) {
-                                    content.append(inputLine);
-                                }
-                                in.close();
-
-                                System.out.println(content.toString());
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-
-                            //End of new code
-                                Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                            } else{
-                                Toast.makeText(RegisterActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        }else{
-                            Toast.makeText(RegisterActivity.this, "User Already Exists With That Username, Try Again", Toast.LENGTH_SHORT).show();}
+                            Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
-            }
+            } // This is the missing closing brace
         });
 
 //        bRegister.setOnClickListener(new View.OnClickListener() {
@@ -171,5 +149,37 @@ public class RegisterActivity extends AppCompatActivity {
 //                queue.add(registerRequest);
 //            }
 //        });
-    }
-}
+            }
+
+            private void registerUser(String firstName, String lastName, String username, String email, String password, Date birthday) {
+                String url = "http://localhost:8081/user/register";
+                RequestQueue requestQueue = Volley.newRequestQueue(RegisterActivity.this);
+
+                JSONObject registerData = new JSONObject();
+                try {
+                    registerData.put("firstName", firstName);
+                    registerData.put("lastName", lastName);
+                    registerData.put("username", username);
+                    registerData.put("email", email);
+                    registerData.put("password", password);
+                    registerData.put("role", "USER");
+                    registerData.put("birthday", birthday.getTime()); // Convert the Date object to milliseconds since epoch
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, registerData, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Handle the response from the server, e.g., navigate to another activity, show a success message, etc.
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error, e.g., show an error message
+                    }
+                });
+
+                requestQueue.add(jsonObjectRequest);
+            }
+        }
