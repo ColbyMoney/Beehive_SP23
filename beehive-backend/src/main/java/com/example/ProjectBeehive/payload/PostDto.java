@@ -13,7 +13,7 @@ import java.util.Set;
 public class PostDto {
     private BigInteger POSTS_ID;
 
-    private BigInteger user_id;
+    private String username;
 
     // title should not be null  or empty
     // title should have at least 2 characters
@@ -28,5 +28,5 @@ public class PostDto {
     private LocalDateTime createdAt;
 
     // post content should not be null or empty
-    private Set<CommentDto> comments;
+    //private Set<CommentDto> comments;
 }

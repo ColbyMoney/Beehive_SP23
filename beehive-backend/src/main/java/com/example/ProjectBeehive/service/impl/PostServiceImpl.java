@@ -84,7 +84,7 @@ public class PostServiceImpl implements PostService {
 
 
         post.setPOSTS_ID(postDto.getPOSTS_ID());
-        post.setUserId((postDto.getUser_id()));
+        post.setUserId((userRepository.findIdByUsername(postDto.getUsername())));
         post.setImage(postDto.getImage());
         post.setCreatedAt(postDto.getCreatedAt());
         Post updatedPost = postRepository.save(post);
