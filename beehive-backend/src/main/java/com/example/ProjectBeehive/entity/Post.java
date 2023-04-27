@@ -24,8 +24,9 @@ public class Post {
     @Column(nullable = false)
     private BigInteger POSTS_ID;
 
-    @Column(nullable = false, name = "USER_ID")
-    private BigInteger userId;
+    @ManyToOne // Add this annotation to map the relationship
+    @JoinColumn(name = "USER_ID", nullable = false) // Add this annotation to specify the foreign key column
+    private User user; // Change this field from userId to user
 
     @Lob
     @Column(nullable = false, name = "IMAGE")

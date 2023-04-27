@@ -17,6 +17,8 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
         String pass = params[1];
         String name = params[2];
         String DoB = params[3];
+        String lastName = params[4];
+        String email = params[5];
 
         // Convert the date string to the "yyyy-MM-dd" format
         SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -35,7 +37,7 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
             con.setRequestMethod("POST");
 
             // Correctly format the JSON string
-            String postData = "{\"firstName\":\"" + name + "\",\"lastName\":\"noLastName\",\"username\":\"" + user + "\",\"email\":\"noEmail\",\"password\":\"" + pass + "\",\"role\":\"USER\",\"birthday\":\"" + formattedDoB + "\"}";
+            String postData = "{\"firstName\":\"" + name + "\",\"lastName\":\"" + lastName + "\",\"username\":\"" + user + "\",\"email\":\"" + email + "\",\"password\":\"" + pass + "\",\"role\":\"USER\",\"birthday\":\"" + formattedDoB + "\"}";
 
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json");

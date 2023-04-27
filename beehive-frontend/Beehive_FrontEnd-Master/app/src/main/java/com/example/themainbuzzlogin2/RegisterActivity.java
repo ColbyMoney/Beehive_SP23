@@ -79,6 +79,8 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         final EditText etName = (EditText) findViewById(R.id.etName);
+        final EditText etLastName = (EditText) findViewById(R.id.etLastName);
+        final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) final EditText etUsername = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
 
@@ -88,19 +90,21 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String user = etUsername.getText().toString();
+                String lastName = etLastName.getText().toString();
+                String email = etEmail.getText().toString();
                 String name = etName.getText().toString();
                 String pass = etPassword.getText().toString();
                 String DoB = etDate.getText().toString();
 
-                if (TextUtils.isEmpty(user) || TextUtils.isEmpty(name) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(DoB)) {
+                if (TextUtils.isEmpty(user) || TextUtils.isEmpty(lastName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(name) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(DoB)) {
                     Toast.makeText(RegisterActivity.this, "All fields Required", Toast.LENGTH_SHORT).show();
                 } else {
                     Boolean checkuser = DB.checkUsername(user);
                     if (checkuser == false) {
-                        Boolean insert = DB.insertData(user, name, pass, DoB);
+                        Boolean insert = DB.insertData(user, name, lastName, email, pass, DoB);
                         if (insert) {
                             // Start of new code
-                            new RegisterTask().execute(user, pass, name, DoB);
+                            new RegisterTask().execute(user, pass, name, DoB, lastName, email);
                             // End of new code
 
                             Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
@@ -152,7 +156,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             private void registerUser(String firstName, String lastName, String username, String email, String password, Date birthday) {
-                String url = "http://localhost:8081/user/register";
+                String url = "http://153.91.238.178:8081/user/register";
                 RequestQueue requestQueue = Volley.newRequestQueue(RegisterActivity.this);
 
                 JSONObject registerData = new JSONObject();
@@ -181,5 +185,5 @@ public class RegisterActivity extends AppCompatActivity {
                 });
 
                 requestQueue.add(jsonObjectRequest);
-            }
-        }
+    }
+}

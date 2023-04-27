@@ -56,14 +56,14 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 ).exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
-                ).sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                ).sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+}
+
 
 //    @Bean
 //    public UserDetailsService userDetailsService(){
@@ -80,4 +80,3 @@ public class SecurityConfig {
 //                .build();
 //        return new InMemoryUserDetailsManager(ramesh, admin);
 //    }
-}

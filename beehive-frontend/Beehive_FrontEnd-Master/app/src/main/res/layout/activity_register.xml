@@ -30,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.576"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.731" />
+        app:layout_constraintVertical_bias="0.834" />
 
     <EditText
         android:id="@+id/etName"
@@ -41,7 +41,7 @@
         android:backgroundTint="#F1EDCA"
         android:backgroundTintMode="add"
         android:ems="10"
-        android:hint="Name"
+        android:hint="First Name"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,15 +52,53 @@
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/etDate"
-        android:gravity="center"
-        android:background="@android:color/transparent"
+        android:id="@+id/etLastName"
         android:layout_width="300dp"
         android:layout_height="47dp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="#F1EDCA"
+        android:backgroundTintMode="add"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.576"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.365"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="300dp"
+        android:layout_height="47dp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="#F1EDCA"
+        android:backgroundTintMode="add"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Email"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.576"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.457"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/etDate"
+        android:layout_width="300dp"
+        android:layout_height="47dp"
+        android:background="@android:color/transparent"
         android:backgroundTint="#F1EDCA"
         android:backgroundTintMode="add"
         android:ems="10"
         android:focusable="false"
+        android:gravity="center"
         android:hint="Select Date of Birth"
         android:inputType="date"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -68,17 +106,17 @@
         app:layout_constraintHorizontal_bias="0.576"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.587" />
+        app:layout_constraintVertical_bias="0.732" />
 
     <EditText
         android:id="@+id/etPassword"
-        android:gravity="center"
-        android:background="@android:color/transparent"
         android:layout_width="300dp"
         android:layout_height="47dp"
+        android:background="@android:color/transparent"
         android:backgroundTint="#F1EDCA"
         android:backgroundTintMode="add"
         android:ems="10"
+        android:gravity="center"
         android:hint="Password"
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -86,17 +124,17 @@
         app:layout_constraintHorizontal_bias="0.576"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.48" />
+        app:layout_constraintVertical_bias="0.641" />
 
     <EditText
         android:id="@+id/etUsername"
-        android:gravity="center"
-        android:background="@android:color/transparent"
         android:layout_width="300dp"
         android:layout_height="47dp"
+        android:background="@android:color/transparent"
         android:backgroundTint="#F1EDCA"
         android:backgroundTintMode="add"
         android:ems="10"
+        android:gravity="center"
         android:hint="Username"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -104,7 +142,7 @@
         app:layout_constraintHorizontal_bias="0.576"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.374"
+        app:layout_constraintVertical_bias="0.551"
         tools:ignore="MissingConstraints" />
 
     <TextView

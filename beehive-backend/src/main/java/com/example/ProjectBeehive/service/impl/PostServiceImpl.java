@@ -1,6 +1,7 @@
 package com.example.ProjectBeehive.service.impl;
 
 import com.example.ProjectBeehive.entity.Post;
+import com.example.ProjectBeehive.entity.User;
 import com.example.ProjectBeehive.exception.ResourceNotFoundException;
 import com.example.ProjectBeehive.payload.PostDto;
 import com.example.ProjectBeehive.payload.PostResponse;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -34,9 +36,16 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto createPost(PostDto postDto) {
+        // Retrieve the user from the database using the username from the request
+        User user = userRepository.findByUsername(postDto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + postDto.getUsername()));
 
         // convert DTO to entity
         Post post = mapToEntity(postDto);
+
+        // Set the user to the post
+        post.setUser(user);
+
         Post newPost = postRepository.save(post);
 
         // convert entity to DTO
@@ -73,7 +82,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getPostsByUserId(BigInteger userId) {
-        List<Post> posts = postRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        List<Post> posts = postRepository.findByUser_IDOrderByCreatedAtDesc(userId);
         return posts.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
@@ -82,9 +91,12 @@ public class PostServiceImpl implements PostService {
         // get post by id from the database
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
+        // Retrieve the user from the database using the username from the request
+        User user = userRepository.findByUsername(postDto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + postDto.getUsername()));
 
         post.setPOSTS_ID(postDto.getPOSTS_ID());
-        post.setUserId((userRepository.findIdByUsername(postDto.getUsername())));
+        post.setUser(user); // Update this line to use the setUser method
         post.setImage(postDto.getImage());
         post.setCreatedAt(postDto.getCreatedAt());
         Post updatedPost = postRepository.save(post);
@@ -101,7 +113,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public BigInteger getRecentPostId(String username) {
         BigInteger userId = userRepository.findIdByUsername(username);
-        List<Post> posts = postRepository.findPostsByUserIdOrderByCreatedAtDesc(userId);
+        List<Post> posts = postRepository.findByUser_IDOrderByCreatedAtDesc(userId);
         if (!posts.isEmpty()) {
             return posts.get(0).getPOSTS_ID();
         } else {

@@ -1,6 +1,7 @@
 package com.example.ProjectBeehive.controller;
 
 import com.example.ProjectBeehive.payload.PostDto;
+import com.example.ProjectBeehive.security.JwtTokenProvider;
 import com.example.ProjectBeehive.service.PostService;
 import com.example.ProjectBeehive.service.UserService;
 import jakarta.validation.Valid;
@@ -16,14 +17,22 @@ import java.util.List;
 public class PostController {
 
     private PostService postService;
-
     private UserService userService;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.postService = postService;
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
     @PostMapping("/upload")
-    public ResponseEntity<PostDto> uploadPost(@Valid @RequestBody PostDto postDto){
+    public ResponseEntity<PostDto> uploadPost(@Valid @RequestBody PostDto postDto, @RequestHeader("Authorization") String token){
+        // Remove the Bearer prefix from the token
+        String authToken = token.substring(7);
+
+        // Validate the token
+        jwtTokenProvider.validateToken(authToken);
+
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
@@ -42,7 +51,12 @@ public class PostController {
     }
 
     @GetMapping("/findUserPosts")
-    public ResponseEntity<List<PostDto>> getPosts(@RequestParam("username") String username){
+    public ResponseEntity<List<PostDto>> getPosts(@RequestParam("username") String username, @Valid @RequestHeader("Authorization") String token){
+        // Remove the Bearer prefix from the token
+        String authToken = token.substring(7);
+
+        // Validate the token
+        jwtTokenProvider.validateToken(authToken);
         List<PostDto> postDtos = postService.getPostsByUserId(userService.findIdByUsername(username));
         return ResponseEntity.ok(postDtos);
     }

@@ -12,12 +12,7 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, BigInteger> {
-
-    List<Post> findByUserIdOrderByCreatedAtDesc(BigInteger userId);
-
-
-    @Query("SELECT p FROM Post p WHERE p.userId = :userId ORDER BY p.createdAt DESC")
-    List<Post> findPostsByUserIdOrderByCreatedAtDesc(@Param("userId") BigInteger userId);
+    List<Post> findByUser_IDOrderByCreatedAtDesc(BigInteger USER_ID);
 
 /*    @Query("SELECT NEW com.example.ProjectBeehive.entity.PostWithCommentsDto(p.POSTS_ID, p.user_id, p.image, p.createdAt, c.id, c.commenterId, c.posterId, c.postId, c.dateTime, c.edited, c.commentText) FROM Post p JOIN Friend f ON p.user_id = f.friendId LEFT JOIN Comment c ON p.POSTS_ID = c.postId WHERE p.user_id IN :friendIds AND f.status = 'ACCEPTED' ORDER BY p.createdAt DESC, c.dateTime ASC")
     List<Post> findByUserId(@Param("friendIds") List<BigInteger> friendIds);*/

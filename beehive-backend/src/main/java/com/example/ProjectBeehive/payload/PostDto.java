@@ -1,5 +1,6 @@
 package com.example.ProjectBeehive.payload;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -23,8 +24,7 @@ public class PostDto {
 
     // post description should be not null or empty
     // post description should have at least 10 characters
-    @NotEmpty
-    @Size(min = 10, message = "Post should have a date and time")
+    @NotNull(message = "Post should have a date and time")
     private LocalDateTime createdAt;
 
     // post content should not be null or empty
