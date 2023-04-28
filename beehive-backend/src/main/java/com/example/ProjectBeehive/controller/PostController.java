@@ -44,7 +44,12 @@ public class PostController {
     }
 
     @DeleteMapping("/deletePost")
-    public ResponseEntity<String> deletePost(@RequestParam(name = "username") String username){
+    public ResponseEntity<String> deletePost(@RequestParam("username") String username, @Valid @RequestHeader("Authorization") String token){
+        // Remove the Bearer prefix from the token
+        String authToken = token.substring(7);
+
+        // Validate the token
+        jwtTokenProvider.validateToken(authToken);
         postService.deletePostById(postService.getRecentPostId(username));
 
         return new ResponseEntity<>("Post entity deleted successfully.", HttpStatus.OK);

@@ -1,8 +1,6 @@
 package com.example.ProjectBeehive.security;
 
 public class UserResponse {
-    private String id;
-    private String email;
     private String fName;
     private String lName;
     private String username;
@@ -12,29 +10,10 @@ public class UserResponse {
     }
 
     // Constructor with all fields
-    public UserResponse(String id, String email, String fName, String lName, String username) {
-        this.id = id;
-        this.email = email;
+    public UserResponse(String fName, String lName, String username) {
         this.fName = fName;
         this.lName = lName;
         this.username = username;
-    }
-
-    // Getters and setters
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getFName() {

@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserResponse convertToDTO(User user) {
-        return new UserResponse(user.getID().toString(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getUsername());
+        return new UserResponse(user.getFirstName(), user.getLastName(), user.getUsername());
     }
 
     public Optional<User> findById(BigInteger id) {

@@ -50,7 +50,8 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/health").permitAll()
+                                .requestMatchers("/say-hello").permitAll()
                                 .requestMatchers("/user/register").permitAll()
                                 .requestMatchers("/user/login").permitAll()
                                 .anyRequest().authenticated()

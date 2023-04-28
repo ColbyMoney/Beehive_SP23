@@ -6,9 +6,11 @@ import com.example.ProjectBeehive.payload.LoginDto;
 import com.example.ProjectBeehive.entity.User;
 import com.example.ProjectBeehive.exception.UserNotFoundException;
 import com.example.ProjectBeehive.payload.RegisterDto;
+import com.example.ProjectBeehive.security.JwtTokenProvider;
 import com.example.ProjectBeehive.security.UserResponse;
 import com.example.ProjectBeehive.service.AuthService;
 import com.example.ProjectBeehive.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,16 +28,23 @@ public class UserController {
 
     private UserService userService;
     private AuthService authService;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public UserController(UserService userService, AuthService authService){
+    public UserController(UserService userService, AuthService authService, JwtTokenProvider jwtTokenProvider){
         this.userService = userService;
         this.authService = authService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/getAllUsers")
     public Page<UserResponse> findAll(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size,
-                                      @RequestParam(defaultValue = "id") String sortBy) {
+                                      @RequestParam(defaultValue = "10") int size, String sortBy,
+                                      @Valid @RequestHeader("Authorization") String token){
+        // Remove the Bearer prefix from the token
+        String authToken = token.substring(7);
+
+        // Validate the token
+        jwtTokenProvider.validateToken(authToken);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return userService.findAll(pageable);
     }
